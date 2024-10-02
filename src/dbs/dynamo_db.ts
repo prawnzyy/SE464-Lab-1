@@ -19,11 +19,11 @@ export default class DynamoDB implements IDatabase {
     const command = new ScanCommand({
       TableName: "Products",
     });
-    const items = await this.docClient.send(command).Items
-    const length = items.length;
-    var index = Math.floor(Math.random() * length);
-    return items[index];
-    // return new Promise<Product>(() => { });
+    //const items = await this.docClient.send(command).Items
+    //const length = items.length;
+    //var index = Math.floor(Math.random() * length);
+    //return items[index];
+    return new Promise<Product>(() => { });
   };
 
   async queryProductById(productId: string) {

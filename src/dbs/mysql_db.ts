@@ -49,7 +49,9 @@ export default class MySqlDB implements IDatabase {
   async queryOrdersByUser(id: string) {
     ///TODO: Implement this
     return (
-      await this.connection.query('')
+      await this.connection.query(SELECT * 
+                                  FROM orders
+                                  WHERE userId = "${id}")
     )[0] as Order[]; // Not a perfect analog for NoSQL, since SQL cannot return a list.
   };
 
@@ -75,10 +77,33 @@ export default class MySqlDB implements IDatabase {
 
   insertOrder = async (order: Order) => {
     ///TODO: Implement this
+    try {
+      const productJSON = JSON.stringify(order.products);
+
+      // sql query for inserting new order
+      const query = INSERT INTO orders(userId, id, products, totalAmount)
+                    VALUES (?, ?, ?, ?);;
+
+      await this.connection.execute(query, [order.userId, order.id, productJSON, order.totalAmount]);
+      console.log('order inserted successfully');
+    } catch (error) {
+      console.log('An error occured: ' + error);
+      throw error;
+    }
   };
 
   updateUser = async (patch: UserPatchRequest) => {
     ///TODO: Implement this
+    try {
+      const query = UPDATE users
+                    SET id = ?, email = ?, password = ?
+                    WHERE id = ?;;
+
+      await this.connection.execute(query, [patch.id, patch.email, patch.password]);
+    } catch (error) {
+      console.log('An error occured: ' + error);
+      throw error;
+    }
   };
 
   // This is to delete the inserted order to avoid database data being contaminated also to make the data in database consistent with that in the json files so the comparison will return true.
