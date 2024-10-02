@@ -43,9 +43,7 @@ export default class DynamoDB implements IDatabase {
     // return new Promise<Product[]>(() => { });
     const command = new ScanCommand({
       TableName: "Products",
-      Key: {
-        categoryId: category
-      }
+      FilterExpression: "categoryId = :category"
     });
 
     const response = await this.docClient.send(command);

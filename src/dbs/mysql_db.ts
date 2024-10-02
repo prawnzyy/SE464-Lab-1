@@ -29,12 +29,12 @@ export default class MySqlDB implements IDatabase {
 
   async queryRandomProduct() {
     ///TODO: Implement this
-    return this.connection.query('') as unknown as Product;
+    return this.connection.query("SELECT * FROM products ORDER BY RAND() LIMIT 1;") as unknown as Product;
   };
 
   queryAllProducts = async (category?: string) => {
     ///TODO: Implement this
-    return this.connection.query('') as unknown as Product[];
+    return this.connection.query("SELECT * FROM products;") as unknown as Product[];
   };
 
   queryAllCategories = async () => {
@@ -43,7 +43,7 @@ export default class MySqlDB implements IDatabase {
 
   queryAllOrders = async () => {
     ///TODO: Implement this
-    return (await this.connection.query(""))[0] as Order[];
+    return (await this.connection.query("SELECT * FROM orders;"))[0] as Order[];
   };
 
   async queryOrdersByUser(id: string) {
