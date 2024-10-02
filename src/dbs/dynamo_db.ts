@@ -14,7 +14,16 @@ export default class DynamoDB implements IDatabase {
 
   async queryRandomProduct() {
     ///TODO: Implement this--replace the line below
-    return new Promise<Product>(() => { });
+
+    // First get all the products
+    const command = new ScanCommand({
+      TableName: "Products",
+    });
+    const items = await this.docClient.send(command).Items
+    const length = items.length;
+    var index = Math.floor(Math.random() * length);
+    return items[index];
+    // return new Promise<Product>(() => { });
   };
 
   async queryProductById(productId: string) {
@@ -31,7 +40,16 @@ export default class DynamoDB implements IDatabase {
 
   async queryAllProducts(category?: string) {
     ///TODO: Implement this--replace the line below
-    return new Promise<Product[]>(() => { });
+    // return new Promise<Product[]>(() => { });
+    const command = new ScanCommand({
+      TableName: "Products",
+      Key: {
+        categoryId: category
+      }
+    });
+
+    const response = await this.docClient.send(command);
+    return response.Items as Product[];
   };
 
   async queryAllCategories() {
@@ -104,11 +122,39 @@ export default class DynamoDB implements IDatabase {
 
   async insertOrder(order: Order): Promise<void> {
     ///TODO: Implement this--replace the line below. Make sure the deleteOrder is called after insertOrder. You can use "await".
+    const command = new PutCommand({
+      TableName: "Orders",
+      Item: {
+        userId: order.userId,
+        id: order.id,
+        products: order.products,
+        totalAmount: order.totalAmount
+      }
+    })
+    const response = await this.docClient.send(command);
+    console.log(response)
+    await this.deleteOrder(order.id)
+    console.log("Item has been removed after insertion")
     return new Promise<void>(() => { });
   }
 
   async updateUser(patch: UserPatchRequest): Promise<void> {
     ///TODO: Implement this--replace the line below
+    // Not sure if the UpdateCommand will still update even if the value is null, need to test
+    const command = new UpdateCommand({
+      TableName: "Users",
+      Key: {
+        id: patch.id
+      },
+      UpdateExpression: "set email = :e, password = :p",
+      ExpressionAttributeValues: {
+        ":e": patch.email,
+        ":p": patch.password,
+      },
+      ReturnValues: "UPDATED_NEW",
+    })
+    const response = await this.docClient.send(command)
+    console.log(response)
     return new Promise<void>(() => { });
   };
 
