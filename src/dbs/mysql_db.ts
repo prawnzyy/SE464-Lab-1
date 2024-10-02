@@ -49,9 +49,9 @@ export default class MySqlDB implements IDatabase {
   async queryOrdersByUser(id: string) {
     ///TODO: Implement this
     return (
-      await this.connection.query(SELECT * 
+      await this.connection.query(`SELECT * 
                                   FROM orders
-                                  WHERE userId = "${id}")
+                                  WHERE userId = "${id}"`)
     )[0] as Order[]; // Not a perfect analog for NoSQL, since SQL cannot return a list.
   };
 
@@ -81,8 +81,8 @@ export default class MySqlDB implements IDatabase {
       const productJSON = JSON.stringify(order.products);
 
       // sql query for inserting new order
-      const query = INSERT INTO orders(userId, id, products, totalAmount)
-                    VALUES (?, ?, ?, ?);;
+      const query = `INSERT INTO orders(userId, id, products, totalAmount)
+                    VALUES (?, ?, ?, ?);`;
 
       await this.connection.execute(query, [order.userId, order.id, productJSON, order.totalAmount]);
       console.log('order inserted successfully');
@@ -95,9 +95,9 @@ export default class MySqlDB implements IDatabase {
   updateUser = async (patch: UserPatchRequest) => {
     ///TODO: Implement this
     try {
-      const query = UPDATE users
+      const query = `UPDATE users
                     SET id = ?, email = ?, password = ?
-                    WHERE id = ?;;
+                    WHERE id = ?;`;
 
       await this.connection.execute(query, [patch.id, patch.email, patch.password]);
     } catch (error) {
